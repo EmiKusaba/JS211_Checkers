@@ -8,8 +8,18 @@ const rl = readline.createInterface({
 });
 
 
-function Checker() {
+function Checker(color) {
   // Your code here
+//spec 1
+this.color = color;
+  if (this.color === 'white') {
+    this.symbol = String.fromCharCode(0x125CB);
+  }
+  else {
+    this.symbol = String.fromCharCode(0x125CF);
+  }
+
+
 }
 
 class Board {
