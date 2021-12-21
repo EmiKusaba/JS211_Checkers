@@ -69,3 +69,26 @@ class Board {
   }
 }
 //Game
+class Game {
+  constructor() {
+    this.board = new Board()
+  }
+  printBoard() {
+    let string = " 0 1 2 3 4 5 6 7\n"
+    for (let i = 0; i < this.board.grid.length; i++) {
+      let row = this.board.grid[i]
+      let rowString = `${i} `
+    }
+    for (let j = 0; j < row.length; j++) {
+      const val = row[j]
+      if (val) {
+        rowString += `${val.symbol} `
+      } else {
+        rowString += "  "
+      }
+      rowString += "\n"
+      string += rowString
+      console.log(string)
+    }
+  }
+}
