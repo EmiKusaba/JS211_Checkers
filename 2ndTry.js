@@ -78,17 +78,23 @@ class Game {
     for (let i = 0; i < this.board.grid.length; i++) {
       let row = this.board.grid[i]
       let rowString = `${i} `
-    }
-    for (let j = 0; j < row.length; j++) {
-      const val = row[j]
-      if (val) {
-        rowString += `${val.symbol} `
-      } else {
-        rowString += "  "
+      for (let j = 0; j < row.length; j++) {
+        const val = row[j]
+        if (val) {
+          rowString += `${val.symbol} `
+        } else {
+          rowString += "  "
+        }
       }
       rowString += "\n"
       string += rowString
-      console.log(string)
     }
+    console.log(string)
+  }
+  start() {
+    this.board.createCheckers()
+    this.printBoard()
   }
 }
+let game = new Game()
+game.start()
