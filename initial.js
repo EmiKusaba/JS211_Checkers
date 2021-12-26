@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const { kill } = require('process');
 const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
@@ -83,7 +84,6 @@ class Game {
 
   start() {
     this.board.createCheckers()
-    this.printBoard()
   }
 
   move(origRow, origCol, newRow, newCol) {
@@ -93,26 +93,84 @@ class Game {
       return
     }
 
-    if (origCol - newCol !== 1 && newCol - origCol !== 1) {
-      console.log("Error: invalid column")
-      return
-    }
+    if (Math.abs(origCol - newCol) === 2) {
+      // Killing
 
-    if (checker.isWhite) {
-      if (newRow !== origRow + 1) {        
-        console.log("Error: invalid row")
+      if (checker.isWhite) {
+        if (newRow !== origRow + 2) {
+          console.log("Error: invalid row")
+          return
+        }
+      } else {
+        if (newRow !== origRow - 2) {
+          console.log("Error: invalid row")
+          return
+        }
+      }
+
+      const killedRow = checker.isWhite ? origRow + 1 : origRow - 1
+      const killedCol = newCol < origCol ? origCol - 1 : origCol + 1
+      const killedChecker = this.board.grid[killedRow][killedCol]
+
+      if (killedChecker === null) {
+        console.log("Error: no checker to kill")
         return
       }
+
+      if (killedChecker.isWhite === checker.isWhite) {
+        console.log("Error: wrong checker to kill")
+        return
+      }
+
+      this.board.grid[killedRow][killedCol] = null
+
     } else {
-      if (newRow !== origRow - 1) {
-        console.log("Error: invalid row")
+      // Moving
+
+      if (Math.abs(origCol - newCol) !== 1) {
+        console.log("Error: invalid column")
         return
+      }
+
+      if (checker.isWhite) {
+        if (newRow !== origRow + 1) {
+          console.log(`Error: invalid row ${newRow} for white, must be ${origRow + 1}`)
+          return
+        }
+      } else {
+        if (newRow !== origRow - 1) {
+          console.log(`Error: invalid row ${newRow} for black, must be ${origRow - 1}`)
+          return
+        }
       }
     }
 
-    
+
+
+    this.board.grid[origRow][origCol] = null
+    this.board.grid[newRow][newCol] = checker
+
+
   }
+}
+
+function getPrompt() {
+  game.printBoard()
+  rl.question('from which row,col?: ', (origRowCol) => {
+    rl.question('to which row,col?: ', (newRowCol) => {
+
+      const [origRow, origCol] = origRowCol.split(",")
+      const [newRow, newCol] = newRowCol.split(",")
+
+      game.move(parseInt(origRow), parseInt(origCol), parseInt(newRow), parseInt(newCol))
+
+      getPrompt()
+
+    })
+  })
 }
 
 let game = new Game()
 game.start()
+getPrompt()
+
